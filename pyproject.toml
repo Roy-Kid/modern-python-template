@@ -1,0 +1,13 @@
+[project]
+name = "my_project"
+version = "0.0.1"
+dependencies = ["numpy"]
+
+[build-system]
+requires = [
+    "setuptools",
+    "setuptools_scm[toml]",
+    "pybind11",
+    "cmake-build-extension",
+]
+build-backend = "setuptools.build_meta"
