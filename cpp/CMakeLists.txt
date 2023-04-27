@@ -28,7 +28,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # add_subdirectory()
 
 # or compile it manually
-if (not BUILD_SHARED_LIBS)
+if (NOT BUILD_SHARED_LIBS)
     add_library(
         cpp_core
         src/example.cpp
