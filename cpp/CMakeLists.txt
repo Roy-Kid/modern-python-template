@@ -26,8 +26,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # If rely on external cpp submodule, 
 # add_subdirectory()
-
-# or compile it manually
+# ... or compile it manually
 if (NOT BUILD_SHARED_LIBS)
     add_library(
         cpp_core
@@ -35,6 +34,7 @@ if (NOT BUILD_SHARED_LIBS)
     )
 else()
 
+# 
 # Install shared library
 # install(
 #     TARGETS cpp_core
