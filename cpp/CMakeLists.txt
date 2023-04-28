@@ -1,11 +1,62 @@
+find_package(xtl REQUIRED)
+find_package(xtensor REQUIRED)
+if (NOT xtensor_FOUND)
+    # xtensor not found, try to find it as a submodule
+    # else add it as a submodule at enternal/pybind11
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/xtensor/CMakeLists.txt")
+        message(STATUS "xtensor submodule found")
+        add_subdirectory(xtensor)
+    else()
+        message(STATUS "xtensor submodule not found, downloading from github")
+        include(FetchContent)
+        FetchContent_Declare(
+            xtensor
+            GIT_REPOSITORY 
+        )
+        FetchContent_MakeAvailable(xtensor)
+    endif()
+else()
+    message(STATUS "xtensor found")
+endif()
+
+# --- compile cpp code as a shared lib and (optional)test it ---
+
+# Use -fPIC even if statically compiled
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# If rely on external cpp submodule, 
+# add_subdirectory()
+# ... or compile it manually
+add_library(
+    cpp_core
+    src/example.cpp
+)
+
+# Optional: set_target_properties
+
+# Include directory of headers
+target_include_directories(
+    cpp_core
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(
+    cpp_core
+    PUBLIC
+    xtensor
+)
+
 # --- add deps ---
 ## find python then pybind11
-find_package(Python REQUIRED COMPONENTS Interpreter Development)
+find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
 find_package(pybind11 REQUIRED CONFIG QUIET)
+find_package(xtensor-python REQUIRED)
+
 if (NOT pybind11_FOUND)
     # pybind11 not found, try to find it as a submodule
     # else add it as a submodule at enternal/pybind11
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/pybind11/CMakeLists.txt")
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/pybind11/CMakeLists.txt")
         message(STATUS "pybind11 submodule found")
         add_subdirectory(pybind11)
     else()
@@ -17,55 +68,38 @@ if (NOT pybind11_FOUND)
         )
         FetchContent_MakeAvailable(pybind11)
     endif()
-endif()
-
-# --- compile cpp code as a shared lib and (optional)test it ---
-
-# Use -fPIC even if statically compiled
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-# If rely on external cpp submodule, 
-# add_subdirectory()
-# ... or compile it manually
-if (NOT BUILD_SHARED_LIBS)
-    add_library(
-        cpp_core
-        src/example.cpp
-    )
 else()
-
-# 
-# Install shared library
-# install(
-#     TARGETS cpp_core
-#     COMPONENT runtime
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-# )
-
+    message(STATUS "pybind11 found")
 endif()
 
+if (NOT xtensor-python_FOUND)
+    # xtensor-python not found, try to find it as a submodule
+    # else add it as a submodule at enternal/pybind11
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/xtensor-python/CMakeLists.txt")
+        message(STATUS "xtensor-python submodule found")
+        add_subdirectory(xtensor-python)
+    else()
+        message(STATUS "xtensor-python submodule not found, downloading from github")
+        include(FetchContent)
+        FetchContent_Declare(
+            xtensor-python
+            GIT_REPOSITORY 
+        )
+        FetchContent_MakeAvailable(xtensor-python)
+    endif()
+else()
+    message(STATUS "xtensor-python found")
+endif()
 
-# Optional: set_target_properties
-
-# Include directory of headers
-target_include_directories(
-    cpp_core
-    PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
 
 # --- compile python module ---
-
 pybind11_add_module(cpp_kernel bind_example.cpp)
 # target_include_directories(
 #     cpppkg 
 #     PUBLIC
 #     ${CMAKE_CURRENT_SOURCE_DIR}/include 
 # )
-target_link_libraries(cpp_kernel PRIVATE cpp_core)
+target_link_libraries(cpp_kernel PUBLIC cpp_core pybind11::module xtensor-python Python::NumPy)
 
 # --- Install libs so python module can import it ---
 

@@ -36,7 +36,7 @@ setuptools.setup(
             #       This cmake_depends_on option adds the pybind11 installation path
             #       to CMAKE_PREFIX_PATH so that the example finds the pybind11 targets
             #       even if it is not installed in the system.
-            cmake_depends_on=["pybind11"],
+            cmake_depends_on=["pybind11", 'numpy'],
             # Exposes the binary print_answer to the environment.
             # It requires also adding a new entry point in setup.cfg.
             # expose_binaries=["bin/print_answer"],
