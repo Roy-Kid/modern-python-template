@@ -1,5 +1,5 @@
 [project]
-name = "my_project"
+name = "modern_python_template"
 version = "0.0.1"
 dependencies = ["numpy"]
 

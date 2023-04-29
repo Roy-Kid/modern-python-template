@@ -1,4 +1,4 @@
-from my_project.cpp_kernel import int_add, sum_of_sines
+from modern_python_template.cpp_kernel import int_add, sum_of_sines
 
 def cpp_add(a, b):
     if isinstance(a, int) and isinstance(b, int):
