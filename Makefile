@@ -26,20 +26,20 @@ install:          ## Install the project in dev mode.
 
 .PHONY: fmt
 fmt:              ## Format code using black & isort.
-	$(ENV_PREFIX)isort project_name/
-	$(ENV_PREFIX)black -l 79 project_name/
+	$(ENV_PREFIX)isort modern_python_template/
+	$(ENV_PREFIX)black -l 79 modern_python_template/
 	$(ENV_PREFIX)black -l 79 tests/
 
 .PHONY: lint
 lint:             ## Run pep8, black, mypy linters.
-	$(ENV_PREFIX)flake8 project_name/
-	$(ENV_PREFIX)black -l 79 --check project_name/
+	$(ENV_PREFIX)flake8 modern_python_template/
+	$(ENV_PREFIX)black -l 79 --check modern_python_template/
 	$(ENV_PREFIX)black -l 79 --check tests/
-	$(ENV_PREFIX)mypy --ignore-missing-imports project_name/
+	$(ENV_PREFIX)mypy --ignore-missing-imports modern_python_template/
 
 .PHONY: test
 test: lint        ## Run tests and generate coverage report.
-	$(ENV_PREFIX)pytest -v --cov-config .coveragerc --cov=project_name -l --tb=short --maxfail=1 tests/
+	$(ENV_PREFIX)pytest -v --cov-config .coveragerc --cov=modern_python_template -l --tb=short --maxfail=1 tests/
 	$(ENV_PREFIX)coverage xml
 	$(ENV_PREFIX)coverage html
 
@@ -77,9 +77,9 @@ virtualenv:       ## Create a virtual environment.
 release:          ## Create a new tag for release.
 	@echo "WARNING: This operation will create s version tag and push to github"
 	@read -p "Version? (provide the next x.y.z semver) : " TAG
-	@echo "$${TAG}" > project_name/VERSION
+	@echo "$${TAG}" > modern_python_template/VERSION
 	@$(ENV_PREFIX)gitchangelog > HISTORY.md
-	@git add project_name/VERSION HISTORY.md
+	@git add modern_python_template/VERSION HISTORY.md
 	@git commit -m "release: version $${TAG} 🚀"
 	@echo "creating git tag : $${TAG}"
 	@git tag $${TAG}
